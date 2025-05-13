@@ -11,9 +11,6 @@ const saveRecommendation = async (req, res) => {
 
   const { user_id, vendor_id, shop_name, category, content } = req.body;
 
-  
-
-
   if (!user_id || !vendor_id || !shop_name || !category || !content) {
     return res.status(400).json({ message: "Missing required fields" });
   }
@@ -21,13 +18,12 @@ const saveRecommendation = async (req, res) => {
   try {
     // check if user exists
     db.query(
-       "SELECT user_id FROM users WHERE user_id = ?",
+      "SELECT user_id FROM users WHERE user_id = ?",
       [user_id],
 
       (err, userResult) => {
         if (err) {
           console.error("Error querying user:", err);
-       
 
           return res.status(500).json({ message: "Database error" });
         }
@@ -63,17 +59,32 @@ const saveRecommendation = async (req, res) => {
   }
 };
 
-const getRecommendation = (req, res) => {
+const getRecommendations = (req, res) => {
   const authHeader = req.headers["authorization"];
-  if(authHeader !== TEMP_TOKEN) {
-    return res.status(401).json({message: "Invalid Token"});
+  if (authHeader !== TEMP_TOKEN) {
+    return res.status(401).json({ message: "Invalid Token" });
   }
 
   const user_id = req.params.user_id;
 
-  if(!user_id) {
-    res.status(400).json({message: "User ID is required"});
+  if (!user_id) {
+    res.status(400).json({ message: "User ID is required" });
   }
-}
 
-module.exports = { saveRecommendation };
+  const query = `SELECT * FROM recommended_vendors WHERE user_id = ?`;
+
+  db.query(query, [user_id], (err, results) => {
+    if (err) {
+      console.error("Error fetching recommended vendors:", err);
+      return res.status(500).json({ message: "Database error" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "No Recommended Vendors Found" });
+    }
+
+    res.status(200).json({ recommendedVendors: results });
+  });
+};
+
+module.exports = { saveRecommendation, getRecommendations };
