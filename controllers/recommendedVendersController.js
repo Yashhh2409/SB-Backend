@@ -11,8 +11,6 @@ const saveRecommendation = async (req, res) => {
 
   const { user_id, vendor_id, shop_name, category, content } = req.body;
 
-
-  console.log("incomming user id:", user_id);
   
 
 
@@ -39,7 +37,7 @@ const saveRecommendation = async (req, res) => {
         }
 
         // Inseart recommended restarounts
-        const sql = `INSERT INTO recommended_venders (user_id, vender_id, shop_name, category, content) VALUES (?, ?, ?, ?, ?)`;
+        const sql = `INSERT INTO recommended_vendors (user_id, vender_id, shop_name, category, content) VALUES (?, ?, ?, ?, ?)`;
 
         db.query(
           sql,
@@ -64,5 +62,18 @@ const saveRecommendation = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+const getRecommendation = (req, res) => {
+  const authHeader = req.headers["authorization"];
+  if(authHeader !== TEMP_TOKEN) {
+    return res.status(401).json({message: "Invalid Token"});
+  }
+
+  const user_id = req.params.user_id;
+
+  if(!user_id) {
+    res.status(400).json({message: "User ID is required"});
+  }
+}
 
 module.exports = { saveRecommendation };
