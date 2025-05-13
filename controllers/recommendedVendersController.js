@@ -37,7 +37,7 @@ const saveRecommendation = async (req, res) => {
         }
 
         // Inseart recommended restarounts
-        const sql = `INSERT INTO recommended_vendors (user_id, vender_id, shop_name, category, content) VALUES (?, ?, ?, ?, ?)`;
+        const sql = `INSERT INTO recommended_vendors (user_id, vendor_id, shop_name, category, content) VALUES (?, ?, ?, ?, ?)`;
 
         db.query(
           sql,
