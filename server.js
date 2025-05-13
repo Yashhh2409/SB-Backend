@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const categoryRoutes = require('./routes/categoryRoutes');
-const recommendedRestarountsRoute = require('./routes/recommendedRestarountsRoute');
+const recommendedRestarountsRoute = require('./routes/recommendedVendersRoute');
 
 const app = express();
 const PORT = 8000;

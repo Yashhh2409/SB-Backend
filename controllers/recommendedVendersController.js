@@ -12,6 +12,10 @@ const saveRecommendation = async (req, res) => {
   const { user_id, vendor_id, shop_name, category, content } = req.body;
 
 
+  console.log("incomming user id:", user_id);
+  
+
+
   if (!user_id || !vendor_id || !shop_name || !category || !content) {
     return res.status(400).json({ message: "Missing required fields" });
   }
@@ -19,7 +23,7 @@ const saveRecommendation = async (req, res) => {
   try {
     // check if user exists
     db.query(
-       "SELECT user_id FROM users WHERE TRIM(user_id) = ?"
+       "SELECT user_id FROM users WHERE user_id = ?",
       [user_id],
 
       (err, userResult) => {
