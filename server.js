@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const dotenv = require('dotenv').config();
 const categoryRoutes = require('./routes/categoryRoutes');
 const recommendedRestarountsRoute = require('./routes/recommendedVendersRoute');
-const authRoutes = require('./routes/customerRoutes');
+const authRoutes = require('./routes/authRoute')
 
 const app = express();
 const PORT = process.env.PORT || 8000;
