@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require('dotenv').config()
 
+
 const allowedSignupRoles = ["customer", "vendor", "staff", "manager"];
 
 const signup = async (req, res) => {

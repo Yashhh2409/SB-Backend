@@ -2,8 +2,9 @@ const db = require("../config/DB");
 
 const SaveCustomerLogs = async (req, res) => {
   try {
-    const { user_id, session_id, event, category, details = {}, weather_info = {}} =
+    const { session_id, event, category, details = {}, weather_info = {}} =
       req.body;
+      const user_id = req.user?.id;
 
     if (!user_id || !event) {
       return res.status(404).json({ message: "user_id and event required." });
