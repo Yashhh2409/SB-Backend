@@ -1,8 +1,7 @@
 const db = require("../config/DB");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-require('dotenv').config()
-
+require("dotenv").config();
 
 const allowedSignupRoles = ["customer", "vendor", "staff", "manager"];
 
@@ -37,9 +36,13 @@ const signup = async (req, res) => {
 
         const insertedID = result.insertId;
 
-        const token = jwt.sign({ id: insertedID, role }, process.env.JWT_SECRET_KEY, {
-          expiresIn: "7d",
-        });
+        const token = jwt.sign(
+          { id: insertedID, role },
+          process.env.JWT_SECRET_KEY,
+          {
+            expiresIn: "7d",
+          }
+        );
 
         res.status(201).json({
           message: "User registered successfully",
@@ -84,9 +87,13 @@ const login = async (req, res) => {
           return res.status(401).json({ message: "Invalid credentials" });
         }
 
-        const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET_KEY, {
-          expiresIn: "7d",
-        });
+        const token = jwt.sign(
+          { id: user.id, role: user.role },
+          process.env.JWT_SECRET_KEY,
+          {
+            expiresIn: "7d",
+          }
+        );
 
         res.json({
           message: "Login successful",
@@ -106,4 +113,28 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { signup, login };
+const getAuthCustomers = async (req, res) => {
+  try {
+    // const userId = req.user.id;
+
+    const query = `SELECT id, email, phone, password, role, created_at FROM auth_users WHERE role = "customer"`;
+
+    db.query(query, (err, results) => {
+      if (err) {
+        console.error("DB Error:", err);
+        return res.status(500).json({ message: "Database Error" });
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      return res.status(200).json({user: results})
+    });
+  } catch (error) {
+    console.error("Server Error:", error.message);
+    res.status(500).json({message: "Server Error", error: error.message})
+  }
+};
+
+module.exports = { signup, login, getAuthCustomers };
