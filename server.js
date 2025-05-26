@@ -5,6 +5,7 @@ const dotenv = require('dotenv').config();
 const categoryRoutes = require('./routes/categoryRoutes');
 const recommendedRestarountsRoute = require('./routes/recommendedVendersRoute');
 const authRoutes = require('./routes/authRoute')
+const logRoutes = require('./routes/customerLogsRoute')
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -18,6 +19,8 @@ app.use(bodyParser.json());
 app.use('/api/categories', categoryRoutes);
 app.use('/api/recommendations', recommendedRestarountsRoute);
 app.use('/api/auth', authRoutes);
+
+app.use('/api', logRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on: ${PORT}`);
