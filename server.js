@@ -11,6 +11,10 @@ const locationLogRoutes = require('./routes/customerLocationLogsRoute.js')
 
 
 
+const userLogRoute = require('./routes/Ai/userLogsRoute.js')
+const messageRoute = require('./routes/Ai/messageRoute.js')
+
+
 const app = express();
 const PORT = process.env.PORT || 8000;
 
@@ -27,9 +31,17 @@ app.use('/api/recommendations', recommendedRestarountsRoute);
 // app.use('/api/auth', authRoutes);
 app.use('', userRoute);
 
-app.use('/api', logRoutes);
+// app.use('/api', logRoutes);
 
-app.use("/api", locationLogRoutes);
+// app.use("/api", locationLogRoutes);
+
+
+// ------------ AI --------------
+
+app.use('', userLogRoute)
+app.use('', messageRoute)
+
+// ----------------------------
 
 app.listen(PORT, () => {
   console.log(`Server running on: ${PORT}`);

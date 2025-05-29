@@ -306,6 +306,87 @@ const loginWithEmail = async (req, res) => {
   }
 };
 
+// const addUser = async (req, res) => {
+//   try {
+//     const {
+//       profile_image,
+//       fname,
+//       lname,
+//       email,
+//       phone,
+//       password,
+//       company,
+//       designation,
+//       website,
+//       vat,
+//       address,
+//       description,
+//       userType,
+//       status_id
+//     } = req.body;
+
+//     // Required fields validation
+//     if (!email || !phone || !password) {
+//       return res.status(400).json({ message: "Email, phone, and password are required" });
+//     }
+
+//     // Role-based validation
+//     const currentUserType = req.user.userType;
+
+//     if (currentUserType === 2 && userType !== 4) {
+//       return res.status(403).json({ message: "Vendors can only add customers" });
+//     }
+
+//     if (currentUserType === 4) {
+//       return res.status(403).json({ message: "Customers are not allowed to add users" });
+//     }
+
+//     // Check if email already exists
+//     const [existing] = await db.query("SELECT * FROM user_data WHERE email = ?", [email]);
+//     if (existing.length > 0) {
+//       return res.status(409).json({ message: "Email already exists" });
+//     }
+
+//     // Hash password
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     // Created by current user
+//     const created_by = req.user.id;
+
+//     // Insert into database
+//     await db.query(`
+//       INSERT INTO user_data (
+//         profile_image, fname, lname, email, phone, password, company,
+//         designation, website, vat, address, description,
+//         userType, status_id, created_by
+//       )
+//       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+//     `, [
+//       profile_image || null,
+//       fname || null,
+//       lname || null,
+//       email,
+//       phone,
+//       hashedPassword,
+//       company || null,
+//       designation || null,
+//       website || null,
+//       vat || null,
+//       address || null,
+//       description || null,
+//       userType,
+//       status_id || null,
+//       created_by
+//     ]);
+
+//     return res.status(201).json({ success: true, message: "User added successfully" });
+
+//   } catch (error) {
+//     console.error("AddUser Error:", error);
+//     return res.status(500).json({ message: "Internal server error", error: error.message });
+//   }
+// };
+
 const addUser = async (req, res) => {
   try {
     const {
@@ -322,7 +403,12 @@ const addUser = async (req, res) => {
       address,
       description,
       userType,
-      status_id
+      status_id,
+      business_name,
+      state,
+      city,
+      certificate_images,
+      category_id
     } = req.body;
 
     // Required fields validation
@@ -357,10 +443,10 @@ const addUser = async (req, res) => {
     await db.query(`
       INSERT INTO user_data (
         profile_image, fname, lname, email, phone, password, company,
-        designation, website, vat, address, description,
-        userType, status_id, created_by
+        designation, website, vat, address, description, userType,
+        status_id, business_name, state, city, certificate_images, category_id, created_by
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       profile_image || null,
       fname || null,
@@ -376,7 +462,12 @@ const addUser = async (req, res) => {
       description || null,
       userType,
       status_id || null,
-      created_by
+      business_name || null,
+      state || null,
+      city || null,
+      certificate_images || null,
+      category_id || null,
+      created_by,
     ]);
 
     return res.status(201).json({ success: true, message: "User added successfully" });
@@ -386,5 +477,6 @@ const addUser = async (req, res) => {
     return res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+
 
 module.exports = { loginWithEmail, addUser };
