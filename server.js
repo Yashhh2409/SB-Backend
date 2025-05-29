@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const basicAuth = require('basic-auth');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv').config();
 const categoryRoutes = require('./routes/categoryRoutes');
@@ -46,6 +47,43 @@ app.use('', messageRoute)
 app.use('', locationLogRoute)
 
 // ----------------------------
+
+
+
+
+
+// Middleware
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// Authorization credentials
+const USERNAME = '89886920041013247322';
+const PASSWORD = 'dk_hICbAXnAeNoxudYh';
+
+app.post('/keybox/bootup', (req, res) => {
+  const user = basicAuth(req);
+  const headers = req.headers;
+  const bat = req.body.bat;
+
+  // Check Basic Auth
+  if (!user || user.name !== USERNAME || user.pass !== PASSWORD) {
+    return res.status(401).send('Unauthorized');
+  }
+
+  // Check for required header
+  if (headers['x-app-version'] !== '3.00') {
+    return res.status(400).send('Invalid App Version');
+  }
+
+  // Generate UTC time
+  const now = new Date();
+  const formattedUTC = now.toISOString().replace('T', ' ').substring(0, 19);
+
+  // Sample response logic
+  const response = `utc=${formattedUTC} 4&plan=1&manager=9,198`;
+  res.status(200).send(response);
+});
+
+
 
 app.listen(PORT, () => {
   console.log(`Server running on: ${PORT}`);
