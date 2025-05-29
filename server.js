@@ -10,9 +10,12 @@ const logRoutes = require('./routes/customerLogsRoute')
 const locationLogRoutes = require('./routes/customerLocationLogsRoute.js')
 
 
-
+// ----------------------- AI ---------------------------------
 const userLogRoute = require('./routes/Ai/userLogsRoute.js')
 const messageRoute = require('./routes/Ai/messageRoute.js')
+const locationLogRoute = require('./routes/Ai/LocationLogsRoute.js')
+
+// ------------------------------------------------------------
 
 
 const app = express();
@@ -40,6 +43,7 @@ app.use('', userRoute);
 
 app.use('', userLogRoute)
 app.use('', messageRoute)
+app.use('', locationLogRoute)
 
 // ----------------------------
 
