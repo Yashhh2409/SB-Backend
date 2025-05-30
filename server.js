@@ -92,40 +92,40 @@ app.use('', locationLogRoute)
 
 // ------ without auth ---
 
-// app.post('/keybox/bootup', (req, res) => {
-//   const bat = req.body.bat;
+app.post('/keybox/bootup', (req, res) => {
+  const bat = req.body.bat;
 
-//   // Generate UTC time
-//   const now = new Date();
-//   const formattedUTC = now.toISOString().replace('T', ' ').substring(0, 19);
+  // Generate UTC time
+  const now = new Date();
+  const formattedUTC = now.toISOString().replace('T', ' ').substring(0, 19);
 
-//   // Sample response logic
-//   const response = `utc=${formattedUTC} 4&plan=1&manager=9,198`;
-//   res.status(200).send(response);
-// });
+  // Sample response logic
+  const response = `utc=${formattedUTC} 4&plan=1&manager=9,198`;
+  res.status(200).send(response);
+});
 
 
 // --- track at commands
 
-app.post("/track-at-command", (req, res) => {
-  const { step, status, message } = req.body;
+// app.post("/track-at-command", (req, res) => {
+//   const { step, status, message } = req.body;
 
-  const logLine = `[${new Date().toISOString()}] STEP: ${step || "N/A"} | STATUS: ${status || "N/A"} | MESSAGE: ${message || "None"}\n`;
+//   const logLine = `[${new Date().toISOString()}] STEP: ${step || "N/A"} | STATUS: ${status || "N/A"} | MESSAGE: ${message || "None"}\n`;
 
-  // Path to the log file
-  const logFilePath = path.join(__dirname, "at_command_log.txt");
+//   // Path to the log file
+//   const logFilePath = path.join(__dirname, "at_command_log.txt");
 
-  // Append the log line to the file
-  fs.appendFile(logFilePath, logLine, (err) => {
-    if (err) {
-      console.error("❌ Failed to write log:", err);
-      return res.status(500).json({ success: false, message: "Failed to write log" });
-    }
+//   // Append the log line to the file
+//   fs.appendFile(logFilePath, logLine, (err) => {
+//     if (err) {
+//       console.error("❌ Failed to write log:", err);
+//       return res.status(500).json({ success: false, message: "Failed to write log" });
+//     }
 
-    console.log("✅ Logged:", logLine.trim());
-    res.status(200).json({ success: true, message: "Log saved successfully" });
-  });
-});
+//     console.log("✅ Logged:", logLine.trim());
+//     res.status(200).json({ success: true, message: "Log saved successfully" });
+//   });
+// });
 
 
 app.listen(PORT, () => {
