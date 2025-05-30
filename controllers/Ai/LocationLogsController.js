@@ -78,13 +78,11 @@ const SaveLocationLogs = async (req, res) => {
 
 const getLocationLogs = async (req, res) => {
   try {
-    const [rows] = await db
-      .promise()
-      .query(
+    const [rows] = await db.query(
         `SELECT 
            location_logs.id,
            location_logs.user_id,
-           user_data.name AS user_name,
+           CONCAT(user_data.fname, ' ', user_data.lname) AS user_name,
            location_logs.latitude,
            location_logs.longitude,
            location_logs.area,
