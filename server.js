@@ -10,6 +10,7 @@ const logRoutes = require('./routes/customerLogsRoute')
 // const db = require('./config/DB.js')
 const locationLogRoutes = require('./routes/customerLocationLogsRoute.js')
 const categoryRoutes = require('./routes/category/categoryRouter.js')
+const statusRoutes = require('./routes/common/statusRoutes.js')
 
 const app = express();
 
@@ -49,9 +50,11 @@ app.use('', userRoute);
 
 // ------------ Final Routes --------------
 app.use('', categoryRoutes)
-// ----------------------------
+app.use('', statusRoutes)
 
-// ------------ AI --------------
+// ------------ AI ------------
+
+// ----------------------------
 
 app.use('', userLogRoute)
 app.use('', messageRoute)

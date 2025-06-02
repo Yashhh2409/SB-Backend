@@ -14,7 +14,6 @@ const requiresignin = (req, res, next) => {
 
     req.user = decoded; // attach user info to request
 
-    console.log("fdvdfv:", req.user);
     
 
     next();

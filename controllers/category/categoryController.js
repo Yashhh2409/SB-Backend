@@ -8,10 +8,12 @@ const addCategory = async (req, res) => {
       return res.status(400).json({ message: "Category is name required" });
 
     // Role-based validation only Admin (1) & Staff (3) can add categories
-    const currentUserType = req.user.userType;
-    console.log("curr usertype:", currentUserType);
+    const currentUserType = req.user?.userType;
 
     console.log("User info in controller:", req.user);
+
+    console.log("curr usertype:", currentUserType);
+
 
 
 if (currentUserType !== 1 && currentUserType !== 3) {
