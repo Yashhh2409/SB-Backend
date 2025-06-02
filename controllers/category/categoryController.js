@@ -9,13 +9,22 @@ const addCategory = async (req, res) => {
 
     // Role-based validation only Admin (1) & Staff (3) can add categories
     const currentUserType = req.user.userType;
+    console.log("curr usertype:", currentUserType);
 
-    if(currentUserType !== 1 && currentUserType !== 3) {
-        return res.status(403).json({success: false, message: "You are not allowed to add categories"})
-    }
+    console.log("User info in controller:", req.user);
 
-    await db.execute(
-      `INSERT INTO categories (category_name, icon, parent_category_id, status, created_by) VALUES (?, ?, ?, ?)`,
+
+if (currentUserType !== 1 && currentUserType !== 3) {
+  return res.status(403).json({
+    success: false,
+    message: "You are not allowed to add categories",
+  });
+}
+
+    
+
+    await db.query(
+      `INSERT INTO categories (category_name, icon, parent_category_id, status, created_by) VALUES (?, ?, ?, ?, ?)`,
       [category_name, icon || null, parent_category_id || null, status, req.user.id,]
     );
 

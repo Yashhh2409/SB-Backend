@@ -14,6 +14,9 @@ const requiresignin = (req, res, next) => {
 
     req.user = decoded; // attach user info to request
 
+    console.log("fdvdfv:", req.user);
+    
+
     next();
   } catch (error) {
     return res.status(401).json({ message: "Unauthorized: Invalid token" });

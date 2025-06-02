@@ -289,7 +289,7 @@ const loginWithEmail = async (req, res) => {
     // Check user status
     if (user.status_id !== 1) return res.status(403).json({ msg: "Account is not active." });
 
-    const token = jwt.sign({ id: user.id, role: user.userType }, JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ id: user.id, userType: user.userType }, JWT_SECRET, { expiresIn: '7d' });
 
     res.json({
       token,
