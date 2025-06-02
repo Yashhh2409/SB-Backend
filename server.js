@@ -11,8 +11,12 @@ const logRoutes = require('./routes/customerLogsRoute')
 const locationLogRoutes = require('./routes/customerLocationLogsRoute.js')
 const categoryRoutes = require('./routes/category/categoryRouter.js')
 
+const app = express();
+
 const fs = require("fs");
 const path = require("path");
+
+app.use(express.urlencoded({ extended: true }));
 
 
 // ----------------------- AI ---------------------------------
@@ -23,7 +27,7 @@ const locationLogRoute = require('./routes/Ai/LocationLogsRoute.js')
 // ------------------------------------------------------------
 
 
-const app = express();
+
 const PORT = process.env.PORT || 8000;
 
 // Enable CORS for all origins
