@@ -90,17 +90,17 @@ app.use('', locationLogRoute)
 
 // ------ without auth ---
 
-// app.post('/keybox/bootup', (req, res) => {
-//   const bat = req.body.bat;
+app.post('/keybox/bootup', (req, res) => {
+  const bat = req.body.bat;
 
-//   // Generate UTC time
-//   const now = new Date();
-//   const formattedUTC = now.toISOString().replace('T', ' ').substring(0, 19);
+  // Generate UTC time
+  const now = new Date();
+  const formattedUTC = now.toISOString().replace('T', ' ').substring(0, 19);
 
-//   // Sample response logic
-//   const response = `utc=${formattedUTC} 4&plan=1&manager=9,198`;
-//   res.status(200).send(response);
-// });
+  // Sample response logic
+  const response = `utc=${formattedUTC} 4&plan=1&manager=9,198`;
+  res.status(200).send(response);
+});
 
 
 // --- track at commands
