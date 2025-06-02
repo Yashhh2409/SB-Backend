@@ -478,5 +478,24 @@ const addUser = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    const [users] = await db.query(`
+      SELECT 
+        id, profile_image, fname, lname, email, phone, company, designation, 
+        website, vat, address, description, userType, status_id, 
+        business_name, state, city, certificate_images, category_id, created_by 
+      FROM user_data
+    `);
 
-module.exports = { loginWithEmail, addUser };
+    return res.status(200).json({ success: true, users });
+
+  } catch (error) {
+    console.error("getAllUsers Error:", error);
+    return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+
+
+module.exports = { loginWithEmail, addUser, getAllUsers };

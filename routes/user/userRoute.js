@@ -22,7 +22,7 @@
 // module.exports = router;
 
 const express = require("express");
-const { loginWithEmail, addUser} = require("../../controllers/user/userController.js");
+const { loginWithEmail, addUser, getAllUsers} = require("../../controllers/user/userController.js");
 const { requiresignin } = require("../../middlewares/requiresignin.js"); // your auth middleware
 
 const router = express.Router();
@@ -32,5 +32,7 @@ router.post("/login", loginWithEmail);
 
 // Add user route - protected by requiresignin middleware
 router.post("/add-user", requiresignin, addUser);
+
+router.get('/get-allUsers', getAllUsers);
 
 module.exports = router;
