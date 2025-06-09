@@ -24,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 const userLogRoute = require('./routes/Ai/userLogsRoute.js')
 const messageRoute = require('./routes/Ai/messageRoute.js')
 const locationLogRoute = require('./routes/Ai/LocationLogsRoute.js')
+const recVendors = require('./routes/Ai/getRecVendorsRoute.js')
 
 // ------------------------------------------------------------
 
@@ -54,12 +55,10 @@ app.use('', statusRoutes)
 
 // ------------ AI ------------
 
-// ----------------------------
-
 app.use('', userLogRoute)
 app.use('', messageRoute)
 app.use('', locationLogRoute)
-
+app.use('', recVendors)
 // ----------------------------
 
 
