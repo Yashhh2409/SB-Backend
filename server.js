@@ -169,6 +169,26 @@ app.post('/keybox/bootup/img', upload.single('image'), (req, res) => {
 // ---------------------------------------------------
 
 
+
+// ------------------------------------------------------
+
+app.post('/keybox/img/text', upload.single('image'), (req, res) => {
+  let fileUrl = null;
+  if (req.file) {
+    const protocol = req.protocol;
+    const host = req.get('host');
+    fileUrl = `${protocol}://${host}/uploads/${encodeURIComponent(req.file.filename)}`;
+    const utc = new Date().toISOString().replace('T', ' ').substring(0, 19);
+    res.status(200).send(`Image is uploaded: ${fileUrl} at ${utc}`);
+  } else {
+    res.status(400).send('No image uploaded.');
+  }
+});
+
+
+// ------------------------------------------------------
+
+
 app.listen(PORT, () => {
   console.log(`Server running on: ${PORT}`);
 });
