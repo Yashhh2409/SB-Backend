@@ -3,6 +3,7 @@ const cors = require('cors');
 const basicAuth = require('basic-auth');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv').config();
+const multer = require('multer');
 // const categoryRoutes = require('./routes/categoryRoutes');
 const recommendedRestarountsRoute = require('./routes/recommendedVendersRoute');
 const userRoute = require('./routes/user/userRoute.js')
@@ -130,6 +131,46 @@ app.post("/track-at-command", (req, res) => {
     res.status(200).json({ success: true, message: "Log saved successfully" });
   });
 });
+
+
+// ----------------- Image upload --------------------
+
+// Configure Multer storage (you can customize destination and filename)
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Make sure this folder exists
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
+
+// Accept both fields and a single image file named 'image'
+app.post('/keybox/bootup/img', upload.single('image'), (req, res) => {
+  const bat = req.body.bat; // Text field
+  const file = req.file;    // Uploaded file info
+
+  // Generate UTC time
+  const now = new Date();
+  const formattedUTC = now.toISOString().replace('T', ' ').substring(0, 19);
+
+  // Sample response logic
+  const response = {
+    utc: formattedUTC,
+    plan: 1,
+    manager: '9,198',
+    bat: bat,
+    file: file ? file.filename : null
+  };
+
+  res.status(200).json(response);
+});
+
+// Don't forget to create the 'uploads/' directory!
+
+// ---------------------------------------------------
 
 
 app.listen(PORT, () => {
