@@ -160,7 +160,6 @@ app.post('/keybox/bootup/img', upload.single('image'), (req, res) => {
 
   const allData = {
     ...req.body, // All form fields (e.g. bat, name, etc.)
-    file: req.file ? req.file.filename : null,
     file_url: fileUrl, // Publicly accessible URL
     utc: new Date().toISOString().replace('T', ' ').substring(0, 19)
   };
