@@ -7,6 +7,7 @@ const multer = require('multer');
 const multiparty = require('multiparty');
 
 
+
 // const categoryRoutes = require('./routes/categoryRoutes');
 const recommendedRestarountsRoute = require('./routes/recommendedVendersRoute');
 const userRoute = require('./routes/user/userRoute.js')
@@ -141,37 +142,46 @@ app.post("/track-at-command", (req, res) => {
 
 // ----------------- Image upload --------------------
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Ensure this folder exists
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
-  }
-});
-const upload = multer({ storage: storage });
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, 'uploads/'); // Ensure this folder exists
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, Date.now() + '-' + file.originalname);
+//   }
+// });
+// const upload = multer({ storage: storage });
 
 
-app.post('/keybox/bootup/img', upload.single('image'), (req, res) => {
-  // Build the public URL for the uploaded file
-  let fileUrl = null;
-  if (req.file) {
-    const protocol = req.protocol;
-    const host = req.get('host');
-    fileUrl = `${protocol}://${host}/uploads/${encodeURIComponent(req.file.filename)}`;
-  }
+// app.post('/keybox/bootup/img', upload.single('image'), (req, res) => {
+//   // Build the public URL for the uploaded file
+//   let fileUrl = null;
+//   if (req.file) {
+//     const protocol = req.protocol;
+//     const host = req.get('host');
+//     fileUrl = `${protocol}://${host}/uploads/${encodeURIComponent(req.file.filename)}`;
+//   }
 
-  const allData = {
-    ...req.body, // All form fields (e.g. bat, name, etc.)
-    file_url: fileUrl, // Publicly accessible URL
-    utc: new Date().toISOString().replace('T', ' ').substring(0, 19)
-  };
+//   const allData = {
+//     ...req.body, // All form fields (e.g. bat, name, etc.)
+//     file_url: fileUrl, // Publicly accessible URL
+//     utc: new Date().toISOString().replace('T', ' ').substring(0, 19)
+//   };
 
-  res.status(200).json(allData);
-});
+//   res.status(200).json(allData);
+// });
 // ---------------------------------------------------
 
+// Middleware to parse JSON and urlencoded data
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
 
+// Serve uploads folder statically
+app.use('/uploads', express.static('uploads'));
+
+// 1. Declare storage and upload first
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 // ------------------------------------------------------
 
@@ -192,61 +202,46 @@ app.post('/keybox/img/text', upload.single('image'), (req, res) => {
 // ------------------------------------------------------
 
 
-// ----------------Base64 conversion --------------------
-
-app.use(express.json({ limit: '10mb' })); // For JSON and base64
-app.use(express.urlencoded({ extended: true })); // For form data
 
 
-app.post('/keybox/bootup/imageBase64', (req, res) => {
-    const form = new multiparty.Form();
+// API endpoint
+app.post('/keybox/bootup/imageBase64', upload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('No image uploaded.');
+  }
 
-    form.parse(req, (err, fields, files) => {
-        if (err) {
-            return res.status(500).json({ error: 'Error parsing form data' });
-        }
+  // 1. Convert buffer to base64
+  const base64Image = req.file.buffer.toString('base64');
 
-        // Get the base64 image string from the 'image' field
-        const imageBase64 = fields.image && fields.image[0];
-        if (!imageBase64) {
-            return res.status(400).json({ error: 'No image field found in form data' });
-        }
+  // 2. Decode base64 back to buffer
+  const imageBuffer = Buffer.from(base64Image, 'base64');
 
-        // Remove the data URL prefix if present (e.g., "data:image/jpeg;base64,")
-        const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
-        const imageBuffer = Buffer.from(base64Data, 'base64');
+  // 3. Generate filename
+  const filename = `${Date.now()}-${req.file.originalname.replace(/\s+/g, '_')}.jpg`;
+  const uploadDir = path.join(__dirname, 'uploads');
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+  }
+  const filePath = path.join(uploadDir, filename);
 
-        // Ensure uploads directory exists
-        const uploadDir = path.join(__dirname, 'uploads');
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir);
-        }
+  // 4. Save buffer as JPG file
+  fs.writeFile(filePath, imageBuffer, err => {
+    if (err) {
+      return res.status(500).send('Error saving image.');
+    }
 
-        // Generate a filename
-        const filename = `upload_${Date.now()}.jpg`;
-        const filepath = path.join(uploadDir, filename);
+    // 5. Build public URL
+    const protocol = req.protocol;
+    const host = req.get('host');
+    const fileUrl = `${protocol}://${host}/uploads/${encodeURIComponent(filename)}`;
 
-        // Save the file
-        fs.writeFile(filepath, imageBuffer, (err) => {
-            if (err) {
-                return res.status(500).json({ error: 'Error saving image' });
-            }
-
-            // Build public URL to access the image
-            const protocol = req.protocol;
-            const host = req.get('host');
-            const fileUrl = `${protocol}://${host}/uploads/${filename}`;
-
-            res.status(200).json({
-                success: true,
-                message: 'Image uploaded successfully',
-                filename: filename,
-                file_url: fileUrl
-            });
-        });
+    // 6. Respond with the image URL
+    res.status(200).json({
+      message: 'Image uploaded, converted, and saved as JPG.',
+      file_url: fileUrl
     });
+  });
 });
-
 
 // ------------------------------------------------------
 
