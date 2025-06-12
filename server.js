@@ -147,28 +147,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Accept both fields and a single image file named 'image'
+// POST API: Receive any form fields + 1 image
 app.post('/keybox/bootup/img', upload.single('image'), (req, res) => {
-  const bat = req.body.bat; // Text field
-  const file = req.file;    // Uploaded file info
-
-  // Generate UTC time
-  const now = new Date();
-  const formattedUTC = now.toISOString().replace('T', ' ').substring(0, 19);
-
-  // Sample response logic
-  const response = {
-    utc: formattedUTC,
-    plan: 1,
-    manager: '9,198',
-    bat: bat,
-    file: file ? file.filename : null
+  const allData = {
+    ...req.body, // All form fields (e.g. bat, name, etc.)
+    file: req.file ? req.file.filename : null,
+    utc: new Date().toISOString().replace('T', ' ').substring(0, 19)
   };
 
-  res.status(200).json(response);
+  res.status(200).json(allData);
 });
-
-// Don't forget to create the 'uploads/' directory!
 
 // ---------------------------------------------------
 
