@@ -4,6 +4,9 @@ const basicAuth = require('basic-auth');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv').config();
 const multer = require('multer');
+const multiparty = require('multiparty');
+
+
 // const categoryRoutes = require('./routes/categoryRoutes');
 const recommendedRestarountsRoute = require('./routes/recommendedVendersRoute');
 const userRoute = require('./routes/user/userRoute.js')
@@ -183,6 +186,65 @@ app.post('/keybox/img/text', upload.single('image'), (req, res) => {
   } else {
     res.status(400).send('No image uploaded.');
   }
+});
+
+
+// ------------------------------------------------------
+
+
+// ----------------Base64 conversion --------------------
+
+app.use(express.json({ limit: '10mb' })); // For JSON and base64
+app.use(express.urlencoded({ extended: true })); // For form data
+
+
+app.post('/keybox/bootup/imageBase64', (req, res) => {
+    const form = new multiparty.Form();
+
+    form.parse(req, (err, fields, files) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error parsing form data' });
+        }
+
+        // Get the base64 image string from the 'image' field
+        const imageBase64 = fields.image && fields.image[0];
+        if (!imageBase64) {
+            return res.status(400).json({ error: 'No image field found in form data' });
+        }
+
+        // Remove the data URL prefix if present (e.g., "data:image/jpeg;base64,")
+        const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
+        const imageBuffer = Buffer.from(base64Data, 'base64');
+
+        // Ensure uploads directory exists
+        const uploadDir = path.join(__dirname, 'uploads');
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir);
+        }
+
+        // Generate a filename
+        const filename = `upload_${Date.now()}.jpg`;
+        const filepath = path.join(uploadDir, filename);
+
+        // Save the file
+        fs.writeFile(filepath, imageBuffer, (err) => {
+            if (err) {
+                return res.status(500).json({ error: 'Error saving image' });
+            }
+
+            // Build public URL to access the image
+            const protocol = req.protocol;
+            const host = req.get('host');
+            const fileUrl = `${protocol}://${host}/uploads/${filename}`;
+
+            res.status(200).json({
+                success: true,
+                message: 'Image uploaded successfully',
+                filename: filename,
+                file_url: fileUrl
+            });
+        });
+    });
 });
 
 
