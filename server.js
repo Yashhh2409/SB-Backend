@@ -43,6 +43,9 @@ app.use(express.json());
 app.use('/api/recommendations', recommendedRestarountsRoute);
 
 
+app.use('/uploads', express.static('uploads'));
+
+
 // app.use('/api/auth', authRoutes);
 app.use('', userRoute);
 
@@ -135,29 +138,35 @@ app.post("/track-at-command", (req, res) => {
 
 // ----------------- Image upload --------------------
 
-// Configure Multer storage (you can customize destination and filename)
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Make sure this folder exists
+    cb(null, 'uploads/'); // Ensure this folder exists
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + '-' + file.originalname);
   }
 });
-
 const upload = multer({ storage: storage });
 
-// POST API: Receive any form fields + 1 image
+
 app.post('/keybox/bootup/img', upload.single('image'), (req, res) => {
+  // Build the public URL for the uploaded file
+  let fileUrl = null;
+  if (req.file) {
+    const protocol = req.protocol;
+    const host = req.get('host');
+    fileUrl = `${protocol}://${host}/uploads/${encodeURIComponent(req.file.filename)}`;
+  }
+
   const allData = {
     ...req.body, // All form fields (e.g. bat, name, etc.)
     file: req.file ? req.file.filename : null,
+    file_url: fileUrl, // Publicly accessible URL
     utc: new Date().toISOString().replace('T', ' ').substring(0, 19)
   };
 
   res.status(200).json(allData);
 });
-
 // ---------------------------------------------------
 
 
