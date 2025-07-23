@@ -30,6 +30,7 @@ const userLogRoute = require('./routes/Ai/userLogsRoute.js')
 const messageRoute = require('./routes/Ai/messageRoute.js')
 const locationLogRoute = require('./routes/Ai/LocationLogsRoute.js')
 const recVendors = require('./routes/Ai/getRecVendorsRoute.js')
+const storeLogRoute = require('./routes/Ai/storeLogsRoute.js')
 
 // ------------------------------------------------------------
 
@@ -67,6 +68,7 @@ app.use('', userLogRoute)
 app.use('', messageRoute)
 app.use('', locationLogRoute)
 app.use('', recVendors)
+app.use('', storeLogRoute)
 // ----------------------------
 
 
